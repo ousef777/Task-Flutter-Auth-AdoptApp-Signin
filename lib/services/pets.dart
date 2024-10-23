@@ -1,18 +1,19 @@
 import 'dart:async';
 import 'package:adopt_app/models/pet.dart';
+import 'package:adopt_app/services/client.dart';
 import "package:dio/dio.dart";
 
 class DioClient {
-  final Dio _dio = Dio();
+  // final Dio _dio = Dio();
 
-  final _baseUrl = 'https://coded-pets-api-auth.eapi.joincoded.com';
+  // final _baseUrl = 'https://coded-pets-api-auth.eapi.joincoded.com';
 
   Future<List<Pet>> getPets() async {
     List<Pet> pets = [];
     try {
-      Response response = await _dio.get(_baseUrl + '/pets');
+      Response response = await Client.dio.get('/pets');
       pets = (response.data as List).map((pet) => Pet.fromJson(pet)).toList();
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       print(error);
     }
     return pets;
@@ -25,13 +26,13 @@ class DioClient {
         "name": pet.name,
         "age": pet.age,
         "gender": pet.gender,
-        "image": await MultipartFile.fromFile(
-          pet.image,
-        ),
+        "image": pet.image,//await MultipartFile.fromFile(
+          //pet.image,
+        //),
       });
-      Response response = await _dio.post(_baseUrl + '/pets', data: data);
+      Response response = await Client.dio.post('/pets', data: data);
       retrievedPet = Pet.fromJson(response.data);
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       print(error);
     }
     return retrievedPet;
@@ -51,9 +52,9 @@ class DioClient {
       });
 
       Response response =
-          await _dio.put(_baseUrl + '/pets/${pet.id}', data: data);
+          await Client.dio.put('/pets/${pet.id}', data: data);
       retrievedPet = Pet.fromJson(response.data);
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       print(error);
     }
     return retrievedPet;
@@ -61,8 +62,8 @@ class DioClient {
 
   Future<void> deletePet({required int petId}) async {
     try {
-      await _dio.delete(_baseUrl + '/pets/${petId}');
-    } on DioError catch (error) {
+      await Client.dio.delete('/pets/$petId');
+    } on DioException catch (error) {
       print(error);
     }
   }
@@ -70,9 +71,9 @@ class DioClient {
   Future<Pet> adoptPet({required int petId}) async {
     late Pet retrievedPet;
     try {
-      Response response = await _dio.post(_baseUrl + '/pets/adopt/${petId}');
+      Response response = await Client.dio.post('/pets/adopt/$petId');
       retrievedPet = Pet.fromJson(response.data);
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       print(error);
     }
     return retrievedPet;

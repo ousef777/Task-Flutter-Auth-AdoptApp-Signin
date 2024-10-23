@@ -96,8 +96,8 @@ class AddPetFormState extends State<AddPetForm> {
                   margin: const EdgeInsets.only(top: 20),
                   decoration: BoxDecoration(color: Colors.blue[200]),
                   child: _image != null
-                      ? Image.file(
-                          _image,
+                      ? Image.network(
+                          _image!.path,
                           width: 200.0,
                           height: 200.0,
                           fit: BoxFit.fitHeight,
